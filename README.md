@@ -4,7 +4,8 @@ An initial structure for building Go web apps.
 ## Installation
 - Clone this repository in a location from your `GOPATH`
 - Replace all occurrences of `go-init` with the name of the project
-> If you with to change the port that the app will listen to, go to `main.go`
+
+> If you wish to change the port that the app will listen to, go to `main.go`
 
 ## Usage
 ### Routing
