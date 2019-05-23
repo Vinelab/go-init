@@ -1,12 +1,29 @@
 package throw
 
-import "net/http"
+import (
+	"net/http"
 
-// Handle panics, it prefers to be deferred.
-func Handle(e Error, w http.ResponseWriter, r *http.Request) {
-	switch e.(type) {
-	case InvalidInput:
-		err := e.(InvalidInput) // cast to error type
-		http.Error(w, err.Message, int(err.Status))
+	"github.com/vinelab/go-init/response"
+)
+
+func HandleHttpRequestErrors(w http.ResponseWriter) {
+
+	//check if panic happened
+	if err := recover(); err != nil {
+		var status uint16
+		var code uint16
+
+		switch err.(type) {
+		case InvalidInput:
+			status = 400
+
+			err := err.(InvalidInput)
+			code = err.Code
+		default:
+			status = 500
+			code = 500
+		}
+
+		response.JSONError(w, status, code, err.(error).Error())
 	}
 }
