@@ -32,7 +32,7 @@ go get gopkg.in/go-playground/validator.v9
 ```
 go get github.com/gorilla/schema
 ```
-- Use the following snippet to parse and validate given input as a struct (see [here](#errors) for errors)
+- Use the following snippet to parse and validate given input as a struct (see [here](#invalid-input))
 ```go
 type ListingInput struct {
 	Limit  uint `schema:"limit" validate:"min=0,max=100"`
@@ -48,7 +48,7 @@ func ParseListingInput(r *http.Request) *ListingInput {
 
 func Validate(input *ListingInput) {
 	if err := validator.New().Struct(input); err != nil {
-		panic(throw.InvalidInputError(err.Error(), 1000, 400))
+		panic(throw.InvalidInputError(err.Error(), 1000))
 	}
 }
 ```
@@ -69,15 +69,18 @@ response.JSONError(w, status, errorCode, errorMessage)
 ```
 
 ### Error Handling
-- Define errors in the `throw` package at `throw/errors.go` as a struct
+- Define errors in the `throw` package
+
 ```go
-type SomethingWrong struct {
-	*HTTPError
+package throw
+
+type NewError struct {
+	BaseError
 }
 ```
 - For each error, better have a factory method to help make a new instance of the error, i.e.
 ```go
-func SomethingWrongError(m string, c, s uint16) SomethingWrong {
-	return InvalidInput{&HTTPError{Message: m, Code: c, Status: s}r}
+func SomethingWrongError(m string, c uint16) SomethingWrong {
+	return InvalidInput{&HTTPError{Message: m, Code: c}}
 }
 ```
